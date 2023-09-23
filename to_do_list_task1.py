@@ -1,11 +1,33 @@
+"""
+Task 1       : To-Do List App
+Author       : Ahmed Mansour
+Version      : v0.1
+Release Date : 23/9/2023
+
+Description:
+This To-Do List App is a simple task management tool that allows users to create, edit, and delete tasks. It provides an easy way to organize your tasks and keep track of your to-do items.
+
+Contact Information:
+If you have any questions, suggestions, or feedback, feel free to reach out to the author:
+- Email: a.mansour1345@gmail.com
+"""
+
 from tkinter import *
 
 import tkinter as tk
 first_color, second_color, third_color, forth_color = "#2C3333", "#2E4F4F", "#0E8388", "#CBE4DE"
+
+# list of all tasks
 all_tasks = []
+
+# the current task user choose to edit 
+# for value -1 this means there is no task to edit still 
 edit_task_index = -1
 
+
 #functions or classes used in the program
+
+# hoverbutton class to add the hover effect to button widget
 class HoverButton(tk.Button):
     def __init__(self, master, **kw):
         tk.Button.__init__(self,master=master,**kw)
@@ -22,6 +44,7 @@ class HoverButton(tk.Button):
         self['background'] = self.defaultBackground
         self['foreground'] = self.defaultForeground
 
+# taskwidgt class that is responsible for each new task section
 class TaskWidget:
     ctr_tasks = 0
     txt = ""
@@ -38,7 +61,7 @@ class TaskWidget:
 
         self.delete_button = HoverButton(self.task_frame, text="delete", relief="flat", padx=10, bg='darkred', fg=forth_color, activebackground=forth_color, activeforeground=second_color, pady=5)
         self.delete_button.grid(row=0, column=2, sticky=E)
-        self.delete_button.config(command=self.__del__)
+        self.delete_button.config(command=self.delete)
         TaskWidget.ctr_tasks += 1
         self.txt = task_text
 
@@ -56,12 +79,13 @@ class TaskWidget:
         self.txt = new_text
         self.task_label.config(text=new_text)
 
-    def __del__(self):
+    def delete(self):
         for i in all_tasks:
             if (i.get_task_text() == self.txt):
-                i.task_frame.grid_forget() # this line where is the error occurs
+                i.task_frame.grid_remove()
                 all_tasks.remove(i)
                 break
+    def __del__(self):
         TaskWidget.ctr_tasks -= 1
 
 def add_new_task():
@@ -73,7 +97,6 @@ def edit_task():
     all_tasks[edit_task_index].change_task_text(new_task_en.get())
     new_task_en.delete(0, END)
     submit_btn.config(text="submit")
-
 
 def btn_functions():
     if (submit_btn.cget("text") == "submit"):
