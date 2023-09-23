@@ -15,6 +15,7 @@ If you have any questions, suggestions, or feedback, feel free to reach out to t
 from tkinter import *
 
 import tkinter as tk
+from tkinter import ttk
 first_color, second_color, third_color, forth_color = "#2C3333", "#2E4F4F", "#0E8388", "#CBE4DE"
 
 # list of all tasks
@@ -49,10 +50,9 @@ class TaskWidget:
     ctr_tasks = 0
     txt = ""
     def __init__(self, parent_frame, task_text):
-        self.task_frame = Frame(parent_frame, bg=third_color, height=60, highlightbackground=forth_color, highlightthickness=2)
+        self.task_frame = Frame(parent_frame, bg=third_color, height=60, highlightbackground=forth_color, highlightthickness=1)
         self.task_frame.grid(row=self.ctr_tasks + 4, column=0, columnspan=3 , sticky="w", pady=5)
-
-        self.task_label = Label(self.task_frame, wraplength=750, anchor="w", text=task_text, bg=third_color, fg=second_color, font=('Helvetica', 15), pady=5, width=65)
+        self.task_label = Label(self.task_frame, wraplength=750, anchor="w", text=task_text, bg=third_color, fg=second_color, font=('Helvetica', 15), pady=5, width=68)
         self.task_label.grid(row=0, column=0, sticky=W)
 
         self.edit_button = HoverButton(self.task_frame, text="edit", relief="flat", padx=10, bg='darkgreen', fg=forth_color, activebackground=forth_color, activeforeground=second_color, pady=5)
@@ -90,7 +90,7 @@ class TaskWidget:
 
 def add_new_task():
     task_txt = new_task_en.get()
-    all_tasks.append(TaskWidget(main_frame, task_txt))
+    all_tasks.append(TaskWidget(scrollable_content_frame, task_txt))
     new_task_en.delete(0, END)
     
 def edit_task():
@@ -114,13 +114,14 @@ def center_window(window, width, height):
 # initialize the form
 main = tk.Tk()
 main.title("ToDo List App")
+main.resizable(False, False)
 center_window(main, 1000, 600)
 
 # set upper_section or title's section
 upper_section = PanedWindow(bg=second_color, height=1)
-upper_section.pack(fill=BOTH, expand=1)
-title = Label(upper_section, text="TO-DO List", bg=second_color, fg=forth_color, font=('Helvetica', 25, 'bold'))
-upper_section.add(title)
+upper_section.pack(fill=BOTH, expand=0)
+title = Label(upper_section, text="TO-DO List", anchor="n", bg=second_color, fg=forth_color, font=('Helvetica', 25, 'bold'))
+title.grid(row=0, column=0, padx=400, pady=20)
 
 # Create a frame for the main content
 main_frame = Frame(main, bg=first_color, padx=50)
@@ -139,6 +140,40 @@ submit_btn.config(command=btn_functions)
 tasks_title = Label(main_frame, text="Tasks", bg=first_color, fg=forth_color, font=('Helvetica', 20, 'bold'), pady=20)
 tasks_title.grid(row=2, column=0, sticky="nw")
 
+# Create a frame to contain the scrollable content inside main_frame
+scrollable_frame = tk.Frame(main_frame)
+scrollable_frame.grid(row=3, column=0, columnspan=2, sticky="ew")
+
+# Configure the columns to expand horizontally
+main_frame.columnconfigure(0, weight=1)
+main_frame.columnconfigure(1, weight=1)
+
+# Create a canvas widget inside the scrollable_frame
+canvas = tk.Canvas(scrollable_frame, bg=first_color, relief='flat', highlightthickness=0)
+canvas.pack(fill="both", expand=True, side="left")
+
+# Create a vertical scrollbar for the canvas
+scrollbar = ttk.Scrollbar(scrollable_frame, orient="vertical", command=canvas.yview)
+scrollbar.pack(side="right", fill="y", pady=0)
+scrollbar['takefocus'] = 0
+# Configure the canvas to work with the scrollbar
+canvas.configure(yscrollcommand=scrollbar.set)
+
+# Create a frame to contain the scrollable content
+scrollable_content_frame = tk.Frame(canvas, bg=first_color)
+canvas.create_window((0, 0), window=scrollable_content_frame, anchor="nw")
+
+
+def on_mousewheel(event):
+    canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+canvas.bind_all("<MouseWheel>", on_mousewheel)
+
+# Update the canvas scroll region when the frame size changes
+def configure_scrollable_frame(event):
+    canvas.configure(scrollregion=canvas.bbox("all"))
+
+scrollable_frame.bind("<Configure>", configure_scrollable_frame)
 
 # ready to run the application after set all widgets
 main.mainloop()
