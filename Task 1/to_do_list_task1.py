@@ -26,6 +26,8 @@ try:
 except FileNotFoundError:
     print ("please check for the path of the Database (JSON) file")
     tasks = []
+except:
+    print("an Error occured")
 else:
     print ("DB file opened succesfully :)")
 
@@ -220,5 +222,7 @@ try:
 except FileNotFoundError:
     print ("please check for the path of the Database (JSON) file")
     print ("Data save failed :(")
+except:
+    print("an Error occured")
 else:
     print ("Data saved succesfully in DB :)")
