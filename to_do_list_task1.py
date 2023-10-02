@@ -1,7 +1,7 @@
 """
 Task 1       : To-Do List App
 Author       : Ahmed Mansour
-Version      : v0.1
+Version      : v0.2
 Release Date : 23/9/2023
 
 Description:
@@ -16,7 +16,13 @@ from tkinter import *
 
 import tkinter as tk
 from tkinter import ttk
+import json
 first_color, second_color, third_color, forth_color = "#2C3333", "#2E4F4F", "#0E8388", "#CBE4DE"
+
+file = open("tasks.json", 'r')
+tasks = json.load(file)
+file.close()
+
 
 # list of all tasks
 all_tasks = []
@@ -86,11 +92,13 @@ class TaskWidget:
             if (i.get_task_text() == self.txt):
                 i.task_frame.pack_forget()
                 all_tasks.remove(i)
+                message.config(text="task deleted succesfully :)", fg="red")
                 break
     def __del__(self):
         TaskWidget.ctr_tasks -= 1
 
 def add_new_task():
+    message.config(text="", fg='lightgreen')
     task_txt = new_task_en.get()
     all_tasks.append(TaskWidget(scrollable_content_frame, task_txt))
     new_task_en.delete(0, END)
@@ -99,6 +107,7 @@ def edit_task():
     all_tasks[edit_task_index].change_task_text(new_task_en.get())
     new_task_en.delete(0, END)
     submit_btn.config(text="submit")
+    message.config(text="Task edited succesfully :)", fg="lightgreen")
 
 def btn_functions():
     if (submit_btn.cget("text") == "submit"):
@@ -112,6 +121,12 @@ def center_window(window, width, height):
     x = (screen_width - width) // 2
     y = (screen_height - height) // 2
     window.geometry(f"{width}x{height}+{x}+{y}")
+
+def old_tasks():
+    for i in tasks:
+        all_tasks.append(TaskWidget(scrollable_content_frame, i))
+
+
 
 # initialize the form
 main = tk.Tk()
@@ -132,7 +147,7 @@ main_frame.pack(fill=BOTH, expand=1)
 add_item_title = Label(main_frame, text="Add Items", bg=first_color, fg=forth_color, font=('Helvetica', 20, 'bold'), pady=10)
 add_item_title.pack(side='top', anchor='w')
 
-message = Label(main_frame, text="testtest", bg=first_color, fg="lightgreen", font=('Helvetica', 8, 'bold'), pady=2)
+message = Label(main_frame, text="", bg=first_color, fg="lightgreen", font=('Helvetica', 8, 'bold'), pady=2)
 message.pack(side='top', anchor='w')
 
 entry_button_frame = Frame(main_frame, bg=first_color)
@@ -183,5 +198,14 @@ scrollable_content_frame.bind("<Configure>", configure_scrollable_frame)
 space_frame = Frame(main_frame, bg=first_color, pady=0)
 space_frame.pack(side="bottom", anchor="w")
 
+old_tasks()
+tasks = []
 # ready to run the application after set all widgets
 main.mainloop()
+
+for i in all_tasks:
+    tasks.append(i.get_task_text())
+
+file = open("tasks.json", "w")
+json.dump(tasks, file, indent=2)
+file.close()
