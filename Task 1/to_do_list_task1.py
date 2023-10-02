@@ -2,7 +2,7 @@
 Task 1       : To-Do List App
 Author       : Ahmed Mansour
 Version      : v0.2
-Release Date : 23/9/2023
+Release Date : 2/10/2023
 
 Description:
 This To-Do List App is a simple task management tool that allows users to create, edit, and delete tasks. It provides an easy way to organize your tasks and keep track of your to-do items.
@@ -19,10 +19,15 @@ from tkinter import ttk
 import json
 first_color, second_color, third_color, forth_color = "#2C3333", "#2E4F4F", "#0E8388", "#CBE4DE"
 
-file = open("tasks.json", 'r')
-tasks = json.load(file)
-file.close()
-
+try: 
+    file = open("tasks.json", 'r')
+    tasks = json.load(file)
+    file.close()
+except FileNotFoundError:
+    print ("please check for the path of the Database (JSON) file")
+    tasks = []
+else:
+    print ("DB file opened succesfully :)")
 
 # list of all tasks
 all_tasks = []
@@ -206,6 +211,14 @@ main.mainloop()
 for i in all_tasks:
     tasks.append(i.get_task_text())
 
-file = open("tasks.json", "w")
-json.dump(tasks, file, indent=2)
-file.close()
+
+
+try: 
+    file = open("tasks.json", "w")
+    json.dump(tasks, file, indent=2)
+    file.close()
+except FileNotFoundError:
+    print ("please check for the path of the Database (JSON) file")
+    print ("Data save failed :(")
+else:
+    print ("Data saved succesfully in DB :)")
