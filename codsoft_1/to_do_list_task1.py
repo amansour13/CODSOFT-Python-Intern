@@ -5,7 +5,8 @@ Version      : v0.2
 Release Date : 2/10/2023
 
 Description:
-This To-Do List App is a simple task management tool that allows users to create, edit, and delete tasks. It provides an easy way to organize your tasks and keep track of your to-do items.
+This To-Do List App is a simple task management tool that allows users to create, edit, and delete tasks.
+It provides an easy way to organize your tasks and keep track of your to-do items.
 
 Contact Information:
 If you have any questions, suggestions, or feedback, feel free to reach out to the author:
